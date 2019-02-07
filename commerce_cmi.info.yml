@@ -1,7 +1,10 @@
-name: Commerce CMI
+name: 'CMI Commerce Payment GateWay'
 type: module
-description: Provides Commerce integration for the CMI Gateway.
-core: 8.x
-package: Commerce (contrib)
+description: 'Implements CMI Commerce Payment Gateway for Drupal Commerce.'
+package: Commerce (CMI Commerce Payments)
 dependencies:
+  - commerce
   - commerce:commerce_payment
+version: '8.x-1.0'
+core: '8.x'
+project: 'commerce_cmi'
