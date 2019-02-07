@@ -13,14 +13,10 @@ use Drupal\commerce_payment\Exception\PaymentGatewayException;
  *
  * @CommercePaymentGateway(
  *   id = "cmi_redirect_checkout",
- *   label = @Translation("CMI (Redirect to CMI)"),
+ *   label = @Translation("CMI (Redirect to cmi)"),
  *   display_label = @Translation("CMI"),
  *    forms = {
- *     "offsite-payment" = "Drupal\commerce_cmi\PluginForm\RedirectCheckoutForm",
- *   },
- *   payment_method_types = {"credit_card"},
- *   credit_card_types = {
- *     "mastercard", "visa",
+ *     "offsite-payment" = "Drupal\commerce_cmi\PluginForm\OffsiteRedirect\CmiForm",
  *   },
  * )
  */
