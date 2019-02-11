@@ -100,9 +100,18 @@ class CmiRedirect extends OffsitePaymentGatewayBase {
     }
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function onReturn(OrderInterface $order, Request $request)
   {
-
+    try {
+      $chargeId = $order->getData('charge_id');
+      // kpr($chargeId);die;
+    } catch (\Exception $exception) {
+      throw new PaymentGatewayException('Payment failed!');
+    }
+    return true;
   }
 }
 

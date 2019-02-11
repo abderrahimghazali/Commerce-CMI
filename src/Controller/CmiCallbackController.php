@@ -16,20 +16,8 @@ class CmiCallbackController extends ControllerBase {
    *
    * @todo Handle Callback from cmi payment gateway.
    */
-  public function CmiCallback() {}
-
-  /**
-   * cmi OK request.
-   *
-   * @todo Handle OK request from cmi payment gateway.
-   */
-  public function CmiOK() {}
-
-  /**
-   * cmi Fail request.
-   *
-   * @todo Handle Fail request from cmi payment gateway.
-   */
-  public function CmiFail() {}
+  public function CmiCallback() {
+    return;
+  }
 
 }

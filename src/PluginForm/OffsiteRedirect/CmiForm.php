@@ -29,33 +29,24 @@ class CmiForm extends PaymentOffsiteForm
     $entity_manager = \Drupal::entityTypeManager();
     $totalPrice = $order->getTotalPrice();
     $rnd = microtime();
+    $current_lang = \Drupal::languageManager()->getCurrentLanguage()->getId();
 
     $redirect_url = $paymentConfiguration['api_url'];
     $redirect_method = 'post';
 
-    // kpr($order->getBillingProfile()->get('address')->given_name);
-    // kpr($order->getBillingProfile()->get('address')->family_name);
-    // kpr($order->getBillingProfile()->get('address')->address_line1);
-    // kpr($order->getBillingProfile()->get('address')->address_line2);
-    // kpr($order->getBillingProfile()->get('address')->locality);
-    // kpr($order->getBillingProfile()->get('address')->administrative_area);
-    // kpr($order->getBillingProfile()->get('address')->postal_code);
-    // kpr($order->getBillingProfile()->get('address')->organization);
-
     $data = [
       'clientid'         => $paymentConfiguration['api_key'],
       'amount'           => number_format($totalPrice->getNumber(), 2),
-      'okUrl'            => Url::fromRoute('commerce_cmi.ok', [], ['absolute' => true])->toString(),
-      'failUrl'          => Url::fromRoute('commerce_cmi.fail', [], ['absolute' => true])->toString(),
+      'okUrl'            => $form['#return_url'],
+      'failUrl'          => $form['#cancel_url'],
       'TranType'         => 'PreAuth',
-
-      'callbackUrl'      => Url::fromRoute('commerce_cmi.ok', [], ['absolute' => true])->toString(),
+      'callbackUrl'      => Url::fromRoute('commerce_cmi.callback', [], ['absolute' => true])->toString(),
       'shopurl'          => Url::fromRoute('<front>', [], ['absolute' => TRUE])->toString(),
       'currency'         => '504',
       'rnd'              => $rnd,
       'storetype'        => '3D_PAY_HOSTING',
       'hashAlgorithm'    => 'ver3',
-      'lang'             => 'fr',
+      'lang'             => $current_lang,
       'refreshtime'      => '5',
       'BillToName'       => $order->getBillingProfile()->get('address')->given_name . ' ' . $order->getBillingProfile()->get('address')->family_name,
       'BillToCompany'    => $order->getBillingProfile()->get('address')->organization,
@@ -67,14 +58,14 @@ class CmiForm extends PaymentOffsiteForm
       'email'            => $order->getEmail(),
       'encoding'         => 'UTF-8',
       'oid'              => $order->id(),
-      'tel'              => '0021201020304',
-      'DIMCRITERIA1'     => 'testDIMCRITERIA1',
+      //'tel'              => '',
+      //'DIMCRITERIA1'     => '',
       'symbolCur'        => $totalPrice->getCurrencyCode(),
       // 'amountCur'        => '',
     ];
+    //kpr($form['#cancel_url']);die;
 
     $storeKey = $paymentConfiguration['secret_key'];
-
 
     $postParams = array();
     foreach ($data as $key => $value){
@@ -94,7 +85,6 @@ class CmiForm extends PaymentOffsiteForm
       }
     }
 
-
     $escapedStoreKey = str_replace("|", "\\|", str_replace("\\", "\\\\", $storeKey));
     $hashval = $hashval . $escapedStoreKey;
 
@@ -113,8 +103,7 @@ class CmiForm extends PaymentOffsiteForm
    * @return string
    */
   public function generate_hash($data, $storeKey) {
-    return $data;
-    //kpr($data['rnd']);die;
+
     $postParams = array();
     foreach ($data as $key => $value){
       array_push($postParams, $key);
