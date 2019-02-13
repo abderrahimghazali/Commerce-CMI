@@ -2,9 +2,11 @@
 
 namespace Drupal\commerce_cmi\PluginForm\OffsiteRedirect;
 
+use Drupal\commerce_price\Entity\Currency;
 use Drupal\commerce_payment\PluginForm\PaymentOffsiteForm;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
+
 
 /**
  * Class CmiForm
@@ -26,8 +28,9 @@ class CmiForm extends PaymentOffsiteForm
     $paymentConfiguration = $paymentGatewayPlugin->getConfiguration();
     /** @var \Drupal\commerce_order\Entity\Order $order */
     $order = $payment->getOrder();
-    $entity_manager = \Drupal::entityTypeManager();
+
     $totalPrice = $order->getTotalPrice();
+    $currency = Currency::load($totalPrice->getCurrencyCode());
     $rnd = microtime();
     $current_lang = \Drupal::languageManager()->getCurrentLanguage()->getId();
 
@@ -42,7 +45,7 @@ class CmiForm extends PaymentOffsiteForm
       'TranType'         => 'PreAuth',
       'callbackUrl'      => Url::fromRoute('commerce_cmi.callback', [], ['absolute' => true])->toString(),
       'shopurl'          => Url::fromRoute('<front>', [], ['absolute' => TRUE])->toString(),
-      'currency'         => '504',
+      'currency'         => $currency->getNumericCode(), //504 Morocco MAD
       'rnd'              => $rnd,
       'storetype'        => '3D_PAY_HOSTING',
       'hashAlgorithm'    => 'ver3',
@@ -63,7 +66,7 @@ class CmiForm extends PaymentOffsiteForm
       'symbolCur'        => $totalPrice->getCurrencyCode(),
       // 'amountCur'        => '',
     ];
-    //kpr($form['#cancel_url']);die;
+
     $data['HASH'] = $this->generate_hash($data ,$paymentConfiguration['secret_key']);
 
     return $this->buildRedirectForm($form, $form_state, $redirect_url, $data, $redirect_method);
@@ -80,7 +83,6 @@ class CmiForm extends PaymentOffsiteForm
     foreach ($data as $key => $value){
       array_push($postParams, $key);
     }
-
     natcasesort($postParams);
     $hashval = "";
     foreach ($postParams as $param){
@@ -95,7 +97,6 @@ class CmiForm extends PaymentOffsiteForm
 
     $escapedStoreKey = str_replace("|", "\\|", str_replace("\\", "\\\\", $storeKey));
     $hashval = $hashval . $escapedStoreKey;
-
     $calculatedHashValue = hash('sha512', $hashval);
     $hash = base64_encode (pack('H*',$calculatedHashValue));
 

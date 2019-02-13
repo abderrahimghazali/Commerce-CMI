@@ -107,7 +107,7 @@ class CmiRedirect extends OffsitePaymentGatewayBase {
   {
     try {
       $chargeId = $order->getData('charge_id');
-      // kpr($chargeId);die;
+      kpr($chargeId);die;
     } catch (\Exception $exception) {
       throw new PaymentGatewayException('Payment failed!');
     }
