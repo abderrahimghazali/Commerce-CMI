@@ -64,35 +64,7 @@ class CmiForm extends PaymentOffsiteForm
       // 'amountCur'        => '',
     ];
     //kpr($form['#cancel_url']);die;
-
-    $storeKey = $paymentConfiguration['secret_key'];
-
-    $postParams = array();
-    foreach ($data as $key => $value){
-      array_push($postParams, $key);
-    }
-
-    natcasesort($postParams);
-
-    $hashval = "";
-    foreach ($postParams as $param){
-      $paramValue = trim($data[$param]);
-      $escapedParamValue = str_replace("|", "\\|", str_replace("\\", "\\\\", $paramValue));
-
-      $lowerParam = strtolower($param);
-      if($lowerParam != "hash" && $lowerParam != "encoding" )	{
-        $hashval = $hashval . $escapedParamValue . "|";
-      }
-    }
-
-    $escapedStoreKey = str_replace("|", "\\|", str_replace("\\", "\\\\", $storeKey));
-    $hashval = $hashval . $escapedStoreKey;
-
-    $calculatedHashValue = hash('sha512', $hashval);
-    $hash = base64_encode (pack('H*',$calculatedHashValue));
-    $data['HASH'] = $hash;
-
-    //$data['HASH'] = $this->generate_hash($data ,$paymentConfiguration['secret_key']);
+    $data['HASH'] = $this->generate_hash($data ,$paymentConfiguration['secret_key']);
 
     return $this->buildRedirectForm($form, $form_state, $redirect_url, $data, $redirect_method);
   }
@@ -109,6 +81,7 @@ class CmiForm extends PaymentOffsiteForm
       array_push($postParams, $key);
     }
 
+    natcasesort($postParams);
     $hashval = "";
     foreach ($postParams as $param){
       $paramValue = trim($data[$param]);
